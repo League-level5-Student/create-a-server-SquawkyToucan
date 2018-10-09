@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -52,13 +53,33 @@ public class JavaWebServer {
  
             out = new PrintWriter(s.getOutputStream(), true);
             out.println("HTTP/1.0 200");
-            out.println("Content-type: text/html");
+            if (request.contains(".html")) {
+    				out.println("Content-type: text/html");
+            }
+            else if (request.contains(".css")) {
+            		out.println("Content-type: text/css");
+            }
+            else if (request.contains(".js")){
+            		out.println("Content-type: application/javascript");
+            }
+            else {
+            		out.println("Content-type: text/html");
+            }
             out.println("Server-name: myserver");
-            String response = "<html>"
-                    + "<head>"
-                    + "<title>My Web Server</title></head>"
-                    + "<h1>Change the server code so that it can read files!</h1>"
-                    + "</html>";
+            String filename = request;
+            if (filename.contains("/")) {
+            		filename.substring(1);
+            		System.out.println(filename);
+            }
+            @SuppressWarnings("resource")
+			BufferedReader htmlReader = new BufferedReader(new FileReader(filename));
+            String line;
+    			String response = "";
+            line = htmlReader.readLine();
+            	while (line != null) {
+            		response = response + line;
+            		line = htmlReader.readLine();
+            	}
             out.println("Content-length: " + response.length());
             out.println("");
             out.println(response);
