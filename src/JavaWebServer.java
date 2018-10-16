@@ -20,8 +20,6 @@ public class JavaWebServer {
 
 	public static void main(String[] args) throws IOException {
 		ServerSocket socket = new ServerSocket(8080);
-
-		// Waits for a connection request
 		while (true) {
 			final Socket connection = socket.accept();
 			Runnable task = new Runnable() {
@@ -31,7 +29,6 @@ public class JavaWebServer {
 				}
 			};
 			THREAD_POOL.execute(task);
-
 		}
 
 	}
@@ -42,10 +39,11 @@ public class JavaWebServer {
         String request;
 
         try {
+        	
             String webServerAddress = s.getInetAddress().toString();
             System.out.println("New Connection:" + webServerAddress);
             in = new BufferedReader(new InputStreamReader(s.getInputStream()));
- 
+            // get away eric
             request = in.readLine();
             //if (request.charAt(0) == '/') {
         			request = request.replace("GET /", "");
@@ -53,9 +51,10 @@ public class JavaWebServer {
         			System.out.println("Request: " + request);
             //}
             System.out.println("--- Client request: " + request);
- 
+            // print out the file type
             out = new PrintWriter(s.getOutputStream(), true);
             out.println("HTTP/1.0 200");
+            // connect to the file
             if (request.contains(".html")) {
             		System.out.println("HTML file");
     				out.println("Content-type: text/html");
@@ -73,12 +72,14 @@ public class JavaWebServer {
             }
             out.println("Server-name: myserver");
             String filename = request;
-            
+            // crucial
+            System.out.println(webServerAddress);
             System.out.println(filename);
             @SuppressWarnings("resource")
 			BufferedReader htmlReader = new BufferedReader(new FileReader(filename));
             String line;
     			String response = "";
+    			// reconnecting to the file
             line = htmlReader.readLine();
             	while (line != null) {
             		response = response + line;
@@ -93,6 +94,7 @@ public class JavaWebServer {
         }
         catch (IOException e)
         {
+        	// this means that the code worked
             System.out.println("Failed respond to client request: " + e.getMessage());
         }
         finally
