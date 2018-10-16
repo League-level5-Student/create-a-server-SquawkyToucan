@@ -36,41 +36,45 @@ public class JavaWebServer {
 
 	}
 
-    private static void HandleRequest(Socket s)
-    {
+    private static void HandleRequest(Socket s) {
         BufferedReader in;
         PrintWriter out;
         String request;
- 
-        try
-        {
+
+        try {
             String webServerAddress = s.getInetAddress().toString();
             System.out.println("New Connection:" + webServerAddress);
             in = new BufferedReader(new InputStreamReader(s.getInputStream()));
  
             request = in.readLine();
+            //if (request.charAt(0) == '/') {
+        			request = request.replace("GET /", "");
+        			request = request.replace(" HTTP/1.1", "");
+        			System.out.println("Request: " + request);
+            //}
             System.out.println("--- Client request: " + request);
  
             out = new PrintWriter(s.getOutputStream(), true);
             out.println("HTTP/1.0 200");
             if (request.contains(".html")) {
+            		System.out.println("HTML file");
     				out.println("Content-type: text/html");
             }
             else if (request.contains(".css")) {
+            		System.out.println("CSS file");
             		out.println("Content-type: text/css");
             }
             else if (request.contains(".js")){
+            		System.out.println("JavaScript");
             		out.println("Content-type: application/javascript");
             }
             else {
-            		out.println("Content-type: text/html");
+            	 request = "index.html";
             }
             out.println("Server-name: myserver");
             String filename = request;
-            if (filename.contains("/")) {
-            		filename.substring(1);
-            		System.out.println(filename);
-            }
+            
+            System.out.println(filename);
             @SuppressWarnings("resource")
 			BufferedReader htmlReader = new BufferedReader(new FileReader(filename));
             String line;
